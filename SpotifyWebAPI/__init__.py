@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of EventGhost.
+# Copyright (C) 2005 Lars-Peter Voss <bitmonster@eventghost.org>
+#
+# EventGhost is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# EventGhost is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with EventGhost; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 import eg
 
 eg.RegisterPlugin(
@@ -25,19 +45,19 @@ eg.RegisterPlugin(
     ),
 )
 
+import wx # NOQA
 import json # NOQA
 import base64 # NOQA
 import requests # NOQA
 import os # NOQA
-import time # NOQA
-import threading # NOQA
+
 
 
 class SpotifyWebAPI(eg.PluginBase):
+
     def __init__(self):
-        self.client_id = 'Your Spotify client ID'
-        self.client_secret = 'Your Spotify client secret'
-        self.userName = 'Your Spotify username'
+        eg.PluginBase.__init__(self)
+
         self.AddAction(PrintUserName)
         self.AddAction(AddToPlaylist)
         self.AddAction(getFirstAccessToken)
@@ -47,30 +67,19 @@ class SpotifyWebAPI(eg.PluginBase):
         )
         playbackGroup.AddAction(PauseMusic)
         playbackGroup.AddAction(PlayMusic)
-        self.access_token = eg.plugins.Webserver.GetPersistentValue(
-            u'spotify_access_token',
-            False
-        )
-        self.refresh_token = eg.plugins.Webserver.GetPersistentValue(
-            u'spotify_refresh_token',
-            False
-        )
 
     def Configure(
             self,
-            client_id="",
-            client_secret="",
-            userName=""
+            client_id='Your Spotify client ID',
+            client_secret='Your Spotify client secret',
+            user_name='Your Spotify username'
     ):
         panel = eg.ConfigPanel()
-        helpString = panel.StaticText(
-            "Enter your Spotify credentials:"
-        )
 
         spaceString = panel.StaticText("")
         clientIDCtrl = panel.TextCtrl(client_id)
         clientSecretCtrl = panel.TextCtrl(client_secret)
-        userNameCtrl = panel.TextCtrl(userName)
+        userNameCtrl = panel.TextCtrl(user_name)
 
         settingsBox = panel.BoxedGroup(
             "User Credentials",
@@ -79,7 +88,6 @@ class SpotifyWebAPI(eg.PluginBase):
             (u"Spotify username:", userNameCtrl)
         )
 
-        panel.sizer.Add(helpString, 0, wx.EXPAND)
         panel.sizer.Add(spaceString, 0, wx.EXPAND)
         panel.sizer.Add(settingsBox, 0, wx.EXPAND)
 
@@ -89,9 +97,6 @@ class SpotifyWebAPI(eg.PluginBase):
                 clientSecretCtrl.GetValue(),
                 userNameCtrl.GetValue()
             )
-            self.client_id = clientIDCtrl.GetValue()
-            self.client_secret = clientSecretCtrl.GetValue()
-            self.userName = userNameCtrl.GetValue()
 
     def __start__(self, client_id, client_secret, userName):
         self.client_id = client_id
