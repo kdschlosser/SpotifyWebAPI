@@ -52,7 +52,6 @@ import requests # NOQA
 import os # NOQA
 
 
-
 class SpotifyWebAPI(eg.PluginBase):
 
     def __init__(self):
